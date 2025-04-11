@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Gioco Divino</title>
+  <link rel="icon" href="https://em-content.zobj.net/thumbs/240/microsoft/319/sparkles_2728.png">
+  <style>
+    :root {
+      --coloreDivino: #272d5f;
+      --sfumaturaA: #1e2249;
+      --sfumaturaB: #3e448b;
+      --luceMistica: rgba(255,255,255,0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      cursor: url('https://cur.cursors-4u.net/cursors/cur-13/cur1151.cur'), auto;
+    }
+
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, var(--sfumaturaA), var(--coloreDivino));
+      background-size: 400% 400%;
+      animation: galassia 20s ease infinite;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      perspective: 1500px;
+      --rx: 0;
+      --ry: 0;
+    }
+
+    @keyframes galassia {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .contenitore {
+      background: linear-gradient(145deg, var(--sfumaturaA), var(--sfumaturaB));
+      box-shadow:
+        0 0 30px var(--luceMistica),
+        0 0 60px var(--coloreDivino),
+        inset 0 0 20px rgba(255,255,255,0.05);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      transform-style: preserve-3d;
+      transform: rotateX(var(--rx)) rotateY(var(--ry));
+      transition: transform 0.3s ease;
+      max-width: 350px;
+      width: 90%;
+      backdrop-filter: blur(10px);
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      box-shadow: 0 0 10px var(--luceMistica);
+      transition: all 0.3s ease;
+    }
+
+    input::placeholder {
+      color: #ccc;
+    }
+
+    input:focus, button:hover {
+      background: rgba(255, 255, 255, 0.15);
+      outline: none;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px var(--coloreDivino);
+    }
+
+    h1, h2, p {
+      margin-bottom: 15px;
+      text-shadow: 0 0 10px #000;
+    }
+
+    #gioco {
+      display: none;
+    }
+
+    .reset {
+      margin-top: 20px;
+      background: #ff4d4d;
+      box-shadow: 0 0 10px red;
+    }
+
+    .reset:hover {
+      background: #ff1a1a;
+      box-shadow: 0 0 20px red;
+    }
+  </style>
+</head>
+<body>
+  <div class="contenitore" id="registrazione">
+    <h1>👤 Registrazione Divina</h1>
+    <input type="text" id="username" placeholder="Inserisci il tuo nome">
+    <button onclick="registrati()">✨ Inizia a giocare</button>
+  </div>
+
+  <div class="contenitore" id="gioco">
+    <h2>😇 Benvenuto, <span id="nomeUtente"></span>!</h2>
+    <p>Punti: <span id="punteggio">0</span></p>
+    <p>Entrate totali: <span id="entrate">0</span></p>
+    <p><strong>⚡ Premi un tasto o tocca lo schermo per fare punti!</strong></p>
+    <button class="reset" onclick="resetta()">🔁 Resetta tutto</button>
+  </div>
+
+  <script>
+    const nomeSalvato = localStorage.getItem("utente");
+    if (nomeSalvato) {
+      avviaGioco(nomeSalvato);
+    }
+
+    function registrati() {
+      const nome = document.getElementById("username").value.trim();
+      if (nome.length < 3) {
+        alert("Il nome deve avere almeno 3 lettere.");
+        return;
+      }
+      localStorage.setItem("utente", nome);
+      localStorage.setItem("punteggio", "0");
+      localStorage.setItem("entrate", "1");
+      avviaGioco(nome);
+    }
+
+    function avviaGioco(nome) {
+      document.getElementById("registrazione").style.display = "none";
+      document.getElementById("gioco").style.display = "block";
+      document.getElementById("nomeUtente").textContent = nome;
+
+      let punteggio = parseInt(localStorage.getItem("punteggio") || 0);
+      let entrate = parseInt(localStorage.getItem("entrate") || 0) + 1;
+      localStorage.setItem("entrate", entrate);
+
+      document.getElementById("punteggio").textContent = punteggio;
+      document.getElementById("entrate").textContent = entrate;
+
+      function aggiungiPunto() {
+        punteggio++;
+        localStorage.setItem("punteggio", punteggio);
+        document.getElementById("punteggio").textContent = punteggio;
+      }
+
+      document.addEventListener("keydown", aggiungiPunto);
+      document.addEventListener("click", aggiungiPunto);
+      document.addEventListener("touchstart", aggiungiPunto);
+    }
+
+    function resetta() {
+      localStorage.clear();
+      location.reload();
+    }
+
+    // 🌌 Effetto 3D al movimento del mouse
+    document.addEventListener('mousemove', e => {
+      const { innerWidth: w, innerHeight: h } = window;
+      const x = e.clientX / w - 0.5;
+      const y = e.clientY / h - 0.5;
+      const rx = y * 20 + 'deg';
+      const ry = x * 30 + 'deg';
+      document.body.style.setProperty('--rx', rx);
+      document.body.style.setProperty('--ry', ry);
+    });
+  </script>
+</body>
+</html>
